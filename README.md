@@ -1,7 +1,7 @@
 # nano_pk
-Home Assistant integration of Hargassner Nano-PK pellet heating systems.
+Domoticz integration of Hargassner Nano-PK pellet heating systems.
 
-This is a custom component to integrate Hargassner heatings with Touch Tronic (touch screen control) into Home Assistant.
+This is a custom component to integrate Hargassner heatings with Touch Tronic (touch screen control) into Domoticz.
 It will add a number of new sensors to your HA that display the current state of the heating.
 All you need is a connection from your Hargassner heating directly from the Touch Tronic to your local LAN, the internet gateway is not required.
 The nano_pk component does not allow remote control of your heating.
@@ -12,39 +12,36 @@ Read on how to try this and let me know if it works!
 
 ### Quick setup guide ###
 
-1. Create a folder `custom_components` in your Home Assistant `config` folder (if not yet done).
-2. Copy all code from `custom_components/nano_pk` of this repository to `config/custom_components/nano_pk`.
-3. Add a section like this to your configuration.yaml:
-```
-nano_pk:
-  host: 192.168.0.10
-  msgformat : NANO_V14L
-  devicename: Nano-PK
-  parameters: STANDARD
-  language: DE
-```
-4. Restart HA.
+1. Create a folder `HargassnerNanoPK` in your Domoticz `plugins` folder (if not yet done).
+2. Copy plugin.py in your HargassnerNanoPK folder
+3. Restart Domoticz
+4. Use Domoticz Hardware Configuration to add and setup the plugin
+
+
 
 ### Supported parameters ###
-- host [required]: IP of your heating. After connecting the heating with your local network, the touch screen will show this.
-- msgformat [required]: All Hargassner heatings with touch screen send out their messages in a different format, and this changes with different firmware versions. Out of the box, `NANO_V14K`, `NANO_V14L`, `NANO_V14M`, `NANO_V14N`, `NANO_V14N2` and `NANO_V14O3` are supported, which are recent firmwares for the Nano-PK (you can see the firmware version on your touch screen).
-- devicename [optional]: The name under which all heating sensors will appear in HA. By default, this is `Hargassner`.
-- parameters [optional]: `STANDARD` is, you guessed it, the standard and imports the most important parameters from the heating as sensors. `FULL` will give you everything that is sent out.
-- language [optional]: Configures the output of the heating state sensor. `EN` is the default, `DE` is also available.
-
-
-### How to use with other Hargassner models or different firmware versions ###
-Apart from the provided templates for `msgformat` (see above), this configuration parameter also allows custom message formats. Follow these steps:
-1. To get the correct message format for your heating, enable SD logging on the touch screen and insert a card for a short time (a couple of seconds should be enough). 
-2. Check the card on your computer: you should find a file `DAQ00000.DAQ` or similar somewhere.
-3. Open this file in a text editor and search for an XML section `<DAQPRJ> ... </DAQPRJ>` right at the beginning.
-4. Copy the entire section and place it using quotes in your `configuration.yaml`, so that you have something like this: `msgformat="<DAQPRJ> ... </DAQPRJ>"`
-5. For different heating models, set `parameters` to `FULL` to check out which parameters are sent.
-
-
-### Acknowledgements ###
-[This code](https://github.com/Jahislove/Hargassner) by @Jahislove was very helpful to understand the messages sent by the heating - thank you!
-
-
-### Feedback ###
-You can leave feedback for this custom component in the [corresponding thread](https://community.home-assistant.io/t/hargassner-heating-integration/288568) at the Home Assistant community forum.
+ Screenshot-Name | Screenshot-Wert | Log-Index | Log-Wert | Code-Variable | Status |
+|----------------|-----------------|-----------|----------|---------------|--------|
+| **Temp. Vorlauf (HK 1)** | 14.8 °C | Index 64 | 14.7 | `TVL_1` | ✅ Korrekt |
+| **Raumtemp. (HK 1)** | 20.5 °C | Index 50 | 24 | `Raumtemp` | ⚠️ Ungenau |
+| **Kessel Temperatur Ist** | 14.6 °C | Index 3 | 14.5 | `TK` | ✅ Korrekt |
+| **Kessel Temperatur Soll** | 0 °C | Index 4 | 0 | `TK_Soll` | ✅ Korrekt |
+| **Rauchgastemperatur** | 21 °C | Index 5 | 14.9 | `TRG` | ⚠️ Alt/verzögert |
+| **Leistung** | 0 % | Index 8 | 20.9 | `Leistung` | ⚠️ Alt/verzögert |
+| **Sauerstoffgehalt Ist** | 1.2 % | Index 1 | 1.2 | `O2_Ist` | ✅ Korrekt |
+| **Sauerstoffgehalt Soll** | 7.5 % | Index 2 | 7.5 | `O2_Soll` | ✅ Korrekt |
+| **Rücklauf Temperatur Ist** | 15 °C | Index 23 | 100 | `TRL` | ❌ Falsch! |
+| **Rücklauf Temperatur Soll** | 35 °C | Index 24 | 85 | `TRL_Soll` | ⚠️ Ungenau |
+| **Höchste Anforderung** | 0 °C | ? | ? | - | ❓ Nicht gefunden |
+| **Temperatur Kombi (PK)** | null °C | ? | ? | - | ❓ Nicht gefunden |
+| **Leistung Kombi (PK)** | null % | ? | ? | - | ❓ Nicht gefunden |
+| **Lagerstand Kombi (PK)** | null kg | ? | ? | - | ❓ Nicht gefunden |
+| **Systemdruck** | 0 bar | ? | ? | - | ❓ Nicht gefunden |
+| **Lagerstand** | 0 kg | Index 46 | 50.1 | `Lagerstand` | ❌ Widerspruch! |
+| **Temperatur Puffer (oben)** | 30.4 °C | Index 19 | 30 | `TPo` | ✅ Korrekt |
+| **Temperatur Puffer (Mitte)** | 30.1 °C | Index 22 | 30.0 | `TPm` | ✅ Korrekt |
+| **Temperatur Puffer (unten)** | 27.9 °C | Index 13 | 27.8 | `TPu` | ✅ Korrekt |
+| **Puffer Füllgrad** | 21 % | Index 42 | 2809 | `Puff_Fuellgrad / 100` | ✅ Korrekt (geteilt) |
+| **Außentemperatur** | 13 °C | Index 54 | 13.1 | `Taus` | ✅ Korrekt |
+| **FWS Fühler** | 30.6 °C | Index 55 | 12.3 | `FWS_Fuehler` | ❌ Falsch! |
+| **FWS Vorlauf** | 30.6 °C | Index 110? | ? | `FWS_Vorlauf` | ❓ Geschätzt |
