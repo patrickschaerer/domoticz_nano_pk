@@ -40,3 +40,14 @@ Read on how to try this and let me know if it works!
 | **FWS Fühler** | 27.3 °C | Index 110 | **27.1** | - | ✅ NEU! |
 | **FWS Vorlauf** | 27.3 °C | Index 111 | **27.2** | - | ✅ NEU! |
 | **Lagerstand** | 50.1 kg | Index 46 | 50.1 | `Lagerstand` | ✅ |
+
+## 📊 Erweiterte Zuordnungstabelle FWS:
+
+| Beschreibung | Soll-Wert | Log-Index | Log-Wert | Status |
+|-------------|-----------|-----------|----------|---------|
+| **FWS Vorlauftemp Ist** | 27 °C | Index 110 | 27.1 | ✅ |
+| **FWS Fühler (Mitte?)** | 27.3 °C | Index 111 | 27.2 | ✅ |
+| **FWS Auslauftemp Soll** | 50 °C | Index 112 | 50 | ✅ NEU! |
+| **FWS Gesamtverbrauch** | 16292 l | Index 117 | 16292 | ✅ NEU! |
+| **FWS Durchfluss** | -- l/min | ? | 0 | ❓ |
+
