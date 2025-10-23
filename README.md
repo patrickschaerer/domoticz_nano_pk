@@ -20,28 +20,23 @@ Read on how to try this and let me know if it works!
 
 
 ### Supported parameters ###
- Screenshot-Name | Screenshot-Wert | Log-Index | Log-Wert | Code-Variable | Status |
-|----------------|-----------------|-----------|----------|---------------|--------|
-| **Temp. Vorlauf (HK 1)** | 14.8 °C | Index 64 | 14.7 | `TVL_1` | ✅ Korrekt |
-| **Raumtemp. (HK 1)** | 20.5 °C | Index 50 | 24 | `Raumtemp` | ⚠️ Ungenau |
-| **Kessel Temperatur Ist** | 14.6 °C | Index 3 | 14.5 | `TK` | ✅ Korrekt |
-| **Kessel Temperatur Soll** | 0 °C | Index 4 | 0 | `TK_Soll` | ✅ Korrekt |
-| **Rauchgastemperatur** | 21 °C | Index 5 | 14.9 | `TRG` | ⚠️ Alt/verzögert |
-| **Leistung** | 0 % | Index 8 | 20.9 | `Leistung` | ⚠️ Alt/verzögert |
-| **Sauerstoffgehalt Ist** | 1.2 % | Index 1 | 1.2 | `O2_Ist` | ✅ Korrekt |
-| **Sauerstoffgehalt Soll** | 7.5 % | Index 2 | 7.5 | `O2_Soll` | ✅ Korrekt |
-| **Rücklauf Temperatur Ist** | 15 °C | Index 23 | 100 | `TRL` | ❌ Falsch! |
-| **Rücklauf Temperatur Soll** | 35 °C | Index 24 | 85 | `TRL_Soll` | ⚠️ Ungenau |
-| **Höchste Anforderung** | 0 °C | ? | ? | - | ❓ Nicht gefunden |
-| **Temperatur Kombi (PK)** | null °C | ? | ? | - | ❓ Nicht gefunden |
-| **Leistung Kombi (PK)** | null % | ? | ? | - | ❓ Nicht gefunden |
-| **Lagerstand Kombi (PK)** | null kg | ? | ? | - | ❓ Nicht gefunden |
-| **Systemdruck** | 0 bar | ? | ? | - | ❓ Nicht gefunden |
-| **Lagerstand** | 0 kg | Index 46 | 50.1 | `Lagerstand` | ❌ Widerspruch! |
-| **Temperatur Puffer (oben)** | 30.4 °C | Index 19 | 30 | `TPo` | ✅ Korrekt |
-| **Temperatur Puffer (Mitte)** | 30.1 °C | Index 22 | 30.0 | `TPm` | ✅ Korrekt |
-| **Temperatur Puffer (unten)** | 27.9 °C | Index 13 | 27.8 | `TPu` | ✅ Korrekt |
-| **Puffer Füllgrad** | 21 % | Index 42 | 2809 | `Puff_Fuellgrad / 100` | ✅ Korrekt (geteilt) |
-| **Außentemperatur** | 13 °C | Index 54 | 13.1 | `Taus` | ✅ Korrekt |
-| **FWS Fühler** | 30.6 °C | Index 55 | 12.3 | `FWS_Fuehler` | ❌ Falsch! |
-| **FWS Vorlauf** | 30.6 °C | Index 110? | ? | `FWS_Vorlauf` | ❓ Geschätzt |
+| Screenshot-Wert | Soll-Wert | Log-Index | Log-Wert | Code-Variable | ✓ Status |
+|----------------|-----------|-----------|----------|---------------|----------|
+| **Temp. Vorlauf (HK 1)** | 14.4 °C | Index 64 | 14.4 | `TVL_1` | ✅ |
+| **Raumtemp. (HK 1)** | 20 °C | Index 50 | 24 | - | ❌ 24 ≠ 20 |
+| **Kessel Temperatur Ist** | 14.3 °C | Index 3 | 14.2 | `TK` | ✅ |
+| **Kessel Temperatur Soll** | 0 °C | Index 4 | 0 | `TK_Soll` | ✅ |
+| **Rauchgastemperatur** | 20.9 °C | Index 5 | 14.6 | `TRG` | ❌ 14.6 ≠ 20.9 |
+| **Leistung** | 0 % | Index 8 | 20.8 | `Leistung` | ❌ 20.8 ≠ 0 |
+| **Sauerstoffgehalt Ist** | 1.2 % | Index 1 | 1.2 | `O2_Ist` | ✅ |
+| **Sauerstoffgehalt Soll** | 7.5 % | Index 2 | 7.5 | `O2_Soll` | ✅ |
+| **Rücklauf Temperatur Ist** | 14.7 °C | Index 14 | **14** | - | ✅ NEU! |
+| **Rücklauf Temperatur Soll** | 35 °C | Index 24 | 85 | `TRL_Soll` | ❌ 85 ≠ 35 |
+| **Temperatur Puffer (oben)** | 27.2 °C | Index 19 | 27 | `TPo` | ✅ |
+| **Temperatur Puffer (Mitte)** | 26.0 °C | Index 22 | 30.0 | `TPm` | ❌ 30 ≠ 26 |
+| **Temperatur Puffer (unten)** | 25.3 °C | Index 13 | 25.2 | `TPu` | ✅ |
+| **Puffer Füllgrad** | 14 % | Index 42 | 2809 | `/100` | ❌ 28 ≠ 14 |
+| **Außentemperatur** | 8.7 °C | Index 54 | 8.7 | `Taus` | ✅ |
+| **FWS Fühler** | 27.3 °C | Index 110 | **27.1** | - | ✅ NEU! |
+| **FWS Vorlauf** | 27.3 °C | Index 111 | **27.2** | - | ✅ NEU! |
+| **Lagerstand** | 50.1 kg | Index 46 | 50.1 | `Lagerstand` | ✅ |
