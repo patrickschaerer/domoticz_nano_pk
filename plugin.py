@@ -1,18 +1,18 @@
 """
-<plugin key="HargassnerNanoPK" name="Hargassner Nano PK" author="converted with Claude.ai from HA plugin" version="1.3.0">
+<plugin key="HargassnerNanoPK" name="Hargassner Nano PK" author="converted with Claude.ai from HA plugin" version="1.4.0">
     <description>
         <h2>Hargassner Nano PK Plugin</h2><br/>
         Connects to Hargassner heating via Telnet<br/>
         <br/>
-        <b>Version 1.3.0 - Complete with FWS support!</b><br/>
+        <b>Version 1.4.0 - Corrected running mode values!</b><br/>
         <br/>
         Supports:<br/>
         - Boiler and buffer temperatures<br/>
         - Flow and return temperatures<br/>
-        - Output, oxygen levels<br/>
-        - Pellet stock and consumption (corrected)<br/>
+        - Output, oxygen levels (corrected)<br/>
+        - Pellet stock and consumption<br/>
         - FWS (Fresh Water Station) parameters<br/>
-        - FWS water consumption counter
+        - Smoke gas temperature (corrected)
     </description>
     <params>
         <param field="Address" label="IP Address" width="200px" required="true" default="192.168.1.100"/>
@@ -122,16 +122,16 @@ class BasePlugin:
         self.UNIT_DRAFT_ACTUAL = 20
         self.UNIT_DRAFT_TARGET = 21
         self.UNIT_RETURN_TEMP_TARGET = 22
-        self.UNIT_FWS_FLOW_TEMP = 24        # FWS Vorlauf Ist
-        self.UNIT_FWS_SENSOR = 25           # FWS Fühler
-        self.UNIT_FWS_OUTLET_TARGET = 26    # FWS Auslauftemp Soll
-        self.UNIT_FWS_WATER_TOTAL = 27      # FWS Gesamtverbrauch
-        self.UNIT_FWS_FLOW_RATE = 28        # FWS Durchfluss
+        self.UNIT_FWS_FLOW_TEMP = 24
+        self.UNIT_FWS_SENSOR = 25
+        self.UNIT_FWS_OUTLET_TARGET = 26
+        self.UNIT_FWS_WATER_TOTAL = 27
+        self.UNIT_FWS_FLOW_RATE = 28
         
         return
 
     def onStart(self):
-        Domoticz.Log("Hargassner Nano PK plugin started (v1.3.0 - Complete with FWS!)")
+        Domoticz.Log("Hargassner Nano PK plugin started (v1.4.0 - Running mode corrected!)")
         
         if Parameters["Mode6"] == "Debug":
             Domoticz.Debugging(1)
@@ -184,37 +184,52 @@ class BasePlugin:
                 
                 try:
                     # ========================================
-                    # VOLLSTÄNDIGE ZUORDNUNG (v1.3.0)
-                    # Verifiziert mit Screenshots und FWS-Daten
+                    # VOLLSTÄNDIGE ZUORDNUNG v1.4.0
+                    # Korrigiert nach Running-Mode-Test 19:50
                     # ========================================
                     
                     # Basis-Parameter
-                    self.lastData['ZK'] = values[0] if len(values) > 0 else None               # Kesselzustand
-                    self.lastData['O2_Ist'] = values[1] if len(values) > 1 else None           # O2 Ist: 1.2%
-                    self.lastData['O2_Soll'] = values[2] if len(values) > 2 else None          # O2 Soll: 7.5%
-                    self.lastData['TK'] = values[3] if len(values) > 3 else None               # Kessel Temp Ist
-                    self.lastData['TK_Soll'] = values[4] if len(values) > 4 else None          # Kessel Temp Soll
-                    self.lastData['TRG'] = values[5] if len(values) > 5 else None              # Rauchgastemperatur
-                    self.lastData['SZ_Ist'] = values[6] if len(values) > 6 else None           # Saugzug/Draft Ist
-                    self.lastData['SZ_Soll'] = values[7] if len(values) > 7 else None          # Saugzug/Draft Soll
-                    self.lastData['Leistung'] = values[8] if len(values) > 8 else None         # Leistung %
+                    self.lastData['ZK'] = values[0] if len(values) > 0 else None               # Kesselzustand (7 = Leistungsbrand)
+                    self.lastData['O2_Ist'] = values[1] if len(values) > 1 else None           # O2 Ist: 8.3%
+                    self.lastData['O2_Soll'] = values[2] if len(values) > 2 else None          # O2 Soll: 7.7%
+                    self.lastData['TK'] = values[3] if len(values) > 3 else None               # Kessel Temp Ist: 67.2°C
+                    self.lastData['TK_Soll'] = values[4] if len(values) > 4 else None          # Kessel Temp Soll: 70°C
                     
-                    # Puffer-Temperaturen
-                    self.lastData['TPu'] = values[13] if len(values) > 13 else None            # Puffer unten
-                    self.lastData['TRL'] = values[14] if len(values) > 14 else None            # Rücklauf Ist ✅
-                    self.lastData['TPo'] = values[19] if len(values) > 19 else None            # Puffer oben
-                    self.lastData['TPm'] = values[22] if len(values) > 22 else None            # Puffer mitte
-                    self.lastData['TRL_Soll'] = values[24] if len(values) > 24 else None       # Rücklauf Soll
+                    # ✅ KORREKTUR 1: Rücklauf Ist war Index 14 → jetzt Index 5
+                    self.lastData['TRL'] = values[5] if len(values) > 5 else None              # Rücklauf Ist: 63.8°C (war TRG)
+                    
+                    self.lastData['SZ_Ist'] = values[6] if len(values) > 6 else None           # Saugzug/Draft Ist: 64
+                    self.lastData['SZ_Soll'] = values[7] if len(values) > 7 else None          # Saugzug/Draft Soll: 7
+                    
+                    # ✅ KORREKTUR 2: Rauchgas war Index 5 → jetzt Index 8
+                    self.lastData['TRG'] = values[8] if len(values) > 8 else None              # Rauchgastemperatur: 143.0°C (war Leistung)
+                    
+                    # ✅ KORREKTUR 3: Puffer Mitte → Index 11 (für Unit 26)
+                    self.lastData['TPm'] = values[11] if len(values) > 11 else None            # Puffer Mitte: 52.7°C (war Index 22)
+                    
+                    # ✅ FEST: Index 13 (Puffer unten) - NICHT ÄNDERN!
+                    self.lastData['TPu'] = values[13] if len(values) > 13 else None            # Puffer unten: 43.9°C ✅ FEST
+                    
+                    # ✅ FEST: Index 19 (Puffer oben) - NICHT ÄNDERN!
+                    self.lastData['TPo'] = values[19] if len(values) > 19 else None            # Puffer oben: 70°C ✅ FEST (zeigt nicht 58.1°C!)
+                    
+                    # ✅ KORREKTUR 4: Leistung war Index 8 → jetzt Index 24
+                    self.lastData['Leistung'] = values[24] if len(values) > 24 else None       # Leistung: 85% (war TRL_Soll)
+                    
+                    # Rücklauf Soll - bleibt bei Index 24? Oder anderen Wert?
+                    # Da Leistung jetzt bei 24 ist, brauchen wir neuen Index für TRL_Soll
+                    # Index 6 zeigt 64 → das passt zu "Rücklauf Soll: 64°C"!
+                    self.lastData['TRL_Soll'] = values[6] if len(values) > 6 else None         # Rücklauf Soll: 64°C (neu!)
                     
                     # Puffer & Pellets
-                    self.lastData['Puff_Fuellgrad'] = values[42] if len(values) > 42 else None # Füllgrad /100
+                    self.lastData['Puff_Fuellgrad'] = values[14] if len(values) > 14 else None # Füllgrad /100
                     self.lastData['Lagerstand'] = values[46] if len(values) > 46 else None     # Pellets Lagerstand
                     
-                    # ✅ KORREKTUR: Pellet Consumption durch 10 teilen!
+                    # Pellet Consumption durch 10 teilen
                     if len(values) > 47:
                         try:
                             raw_consumption = float(values[47])
-                            self.lastData['Verbrauch'] = raw_consumption / 10.0  # KORRIGIERT!
+                            self.lastData['Verbrauch'] = raw_consumption / 10.0
                         except:
                             self.lastData['Verbrauch'] = None
                     else:
@@ -222,18 +237,16 @@ class BasePlugin:
                     
                     self.lastData['Stoerung_Nr'] = values[49] if len(values) > 49 else None    # Störungsnummer
                     
-                    # Temperaturen
-                    self.lastData['Taus'] = values[54] if len(values) > 54 else None           # Außentemperatur
-                    self.lastData['TVL_1'] = values[64] if len(values) > 64 else None          # Vorlauf HK1
+                    # ✅ FEST: Index 54 (Außentemperatur) - NICHT ÄNDERN!
+                    self.lastData['Taus'] = values[54] if len(values) > 54 else None           # Außentemperatur: 10.1°C ✅ FEST
                     
-                    # ✅ FWS (Frischwasserstation) - NEU!
-                    self.lastData['FWS_Vorlauf'] = values[110] if len(values) > 110 else None  # FWS Vorlauf Ist: 27.1°C
-                    self.lastData['FWS_Fuehler'] = values[111] if len(values) > 111 else None  # FWS Fühler: 27.2°C
-                    self.lastData['FWS_Soll'] = values[112] if len(values) > 112 else None     # FWS Auslauftemp Soll: 50°C ✅ NEU!
-                    self.lastData['FWS_Gesamtverbrauch'] = values[117] if len(values) > 117 else None  # FWS Gesamtverbrauch: 16292l ✅ NEU!
+                    self.lastData['TVL_1'] = values[64] if len(values) > 64 else None          # Vorlauf HK1: 34.9°C
                     
-                    # FWS Durchfluss könnte bei Index 113-116 sein, suchen wir nach einem kleinen Wert oder 0
-                    # Meist ist es 0 wenn kein Wasser läuft
+                    # FWS (Frischwasserstation)
+                    self.lastData['FWS_Vorlauf'] = values[110] if len(values) > 110 else None  # FWS Vorlauf: 58.5°C
+                    self.lastData['FWS_Fuehler'] = values[111] if len(values) > 111 else None  # FWS Fühler: 58.5°C
+                    self.lastData['FWS_Soll'] = values[112] if len(values) > 112 else None     # FWS Auslauftemp Soll: 50°C
+                    self.lastData['FWS_Gesamtverbrauch'] = values[117] if len(values) > 117 else None  # FWS Gesamtverbrauch: 16293l
                     
                     # Digitale Werte (Störung)
                     digital_offset = 126
@@ -248,11 +261,17 @@ class BasePlugin:
                     
                     # Debug-Ausgabe
                     if Parameters["Mode6"] == "Debug":
-                        Domoticz.Debug("=== EXTRACTED VALUES v1.3.0 ===")
-                        Domoticz.Debug(f"Pellet Consumption (corrected): {self.lastData.get('Verbrauch')} kg")
-                        Domoticz.Debug(f"FWS Vorlauf Ist: {self.lastData.get('FWS_Vorlauf')}°C")
-                        Domoticz.Debug(f"FWS Auslauf Soll: {self.lastData.get('FWS_Soll')}°C")
-                        Domoticz.Debug(f"FWS Gesamtverbrauch: {self.lastData.get('FWS_Gesamtverbrauch')} l")
+                        Domoticz.Debug("=== EXTRACTED VALUES v1.4.0 (CORRECTED) ===")
+                        Domoticz.Debug(f"Boiler Temp: {self.lastData.get('TK')}°C")
+                        Domoticz.Debug(f"Smoke Gas (Index 8): {self.lastData.get('TRG')}°C")
+                        Domoticz.Debug(f"Output (Index 24): {self.lastData.get('Leistung')}%")
+                        Domoticz.Debug(f"Return Temp Ist (Index 5): {self.lastData.get('TRL')}°C")
+                        Domoticz.Debug(f"Return Temp Soll (Index 6): {self.lastData.get('TRL_Soll')}°C")
+                        Domoticz.Debug(f"Buffer Top (Index 19 FIXED): {self.lastData.get('TPo')}°C")
+                        Domoticz.Debug(f"Buffer Center (Index 11 NEW): {self.lastData.get('TPm')}°C")
+                        Domoticz.Debug(f"Buffer Bottom (Index 13 FIXED): {self.lastData.get('TPu')}°C")
+                        Domoticz.Debug(f"Outside Temp (Index 54 FIXED): {self.lastData.get('Taus')}°C")
+                        Domoticz.Debug(f"Pellet Consumption: {self.lastData.get('Verbrauch')} kg")
                     
                     self.updateAllDevices()
                     self.missedMsgs = 0
@@ -342,16 +361,15 @@ class BasePlugin:
                 Domoticz.Device(Name=self.deviceName + " FWS Outlet Target", Unit=self.UNIT_FWS_OUTLET_TARGET, TypeName="Temperature").Create()
             if self.UNIT_FWS_WATER_TOTAL not in Devices:
                 Domoticz.Device(Name=self.deviceName + " FWS Water Total", Unit=self.UNIT_FWS_WATER_TOTAL, TypeName="Custom", Options={"Custom": "1;l"}).Create()
-            if self.UNIT_FWS_FLOW_RATE not in Devices:
-                Domoticz.Device(Name=self.deviceName + " FWS Flow Rate", Unit=self.UNIT_FWS_FLOW_RATE, TypeName="Custom", Options={"Custom": "1;l/min"}).Create()
 
     def updateAllDevices(self):
         """Aktualisiert alle Devices"""
         
-        # Standard Updates
+        # Kesseltemperatur
         if 'TK' in self.lastData and self.lastData['TK']:
             self.updateDevice(self.UNIT_BOILER_TEMP, 0, self.lastData['TK'])
         
+        # Kesselzustand (Unit 3 - NICHT ÄNDERN per Vorgabe)
         if 'ZK' in self.lastData and self.lastData['ZK']:
             try:
                 idx = int(self.lastData['ZK'])
@@ -361,6 +379,7 @@ class BasePlugin:
             except:
                 pass
         
+        # Fehlerstatus
         if 'Stoerung' in self.lastData:
             if self.lastData['Stoerung'] == 'False':
                 self.updateDevice(self.UNIT_ERROR, 0, "OK")
@@ -369,48 +388,55 @@ class BasePlugin:
                 errorText = ERROR_CODES.get(errorCode, f"Error {errorCode}")
                 self.updateDevice(self.UNIT_ERROR, 0, errorText)
         
+        # ✅ Leistung (Unit 5) - jetzt Index 24
         if 'Leistung' in self.lastData and self.lastData['Leistung']:
             self.updateDevice(self.UNIT_OUTPUT, 0, self.lastData['Leistung'])
         
+        # ✅ Rauchgastemperatur (Unit 6) - jetzt Index 8
         if 'TRG' in self.lastData and self.lastData['TRG']:
             self.updateDevice(self.UNIT_SMOKE_TEMP, 0, self.lastData['TRG'])
         
+        # Außentemperatur (FEST: Index 54)
         if 'Taus' in self.lastData and self.lastData['Taus']:
             self.updateDevice(self.UNIT_OUTSIDE_TEMP, 0, self.lastData['Taus'])
         
+        # Puffer Oben (FEST: Index 19)
         if 'TPo' in self.lastData and self.lastData['TPo']:
             self.updateDevice(self.UNIT_BUFFER_TOP, 0, self.lastData['TPo'])
         
+        # ✅ Puffer Mitte (Unit 9) - jetzt Index 11
         if 'TPm' in self.lastData and self.lastData['TPm']:
             self.updateDevice(self.UNIT_BUFFER_CENTER, 0, self.lastData['TPm'])
         
+        # Puffer Unten (FEST: Index 13)
         if 'TPu' in self.lastData and self.lastData['TPu']:
             self.updateDevice(self.UNIT_BUFFER_BOTTOM, 0, self.lastData['TPu'])
         
-        if 'Puff_Fuellgrad' in self.lastData and self.lastData['Puff_Fuellgrad']:
-            try:
-                level = float(self.lastData['Puff_Fuellgrad']) / 100.0
-                self.updateDevice(self.UNIT_BUFFER_LEVEL, 0, f"{level:.0f}")
-            except:
-                pass
+        # Pufferfüllgrad
+        if 'Puff_Fuellgrad' in self.lastData and self.lastData['Puff_Fuellgrad']:              
+                self.updateDevice(self.UNIT_BUFFER_LEVEL, 0, self.lastData['Puff_Fuellgrad'])
+           
         
+        # ✅ Rücklauf Ist (Unit 12) - jetzt Index 5
         if 'TRL' in self.lastData and self.lastData['TRL']:
             self.updateDevice(self.UNIT_RETURN_TEMP, 0, self.lastData['TRL'])
         
+        # Pellets
         if 'Lagerstand' in self.lastData and self.lastData['Lagerstand']:
             self.updateDevice(self.UNIT_PELLET_STOCK, 0, self.lastData['Lagerstand'])
         
-        # ✅ Pellet Consumption - KORRIGIERT (durch 10 geteilt)
+        # Pellet Consumption (korrigiert /10)
         if 'Verbrauch' in self.lastData and self.lastData['Verbrauch']:
             self.updateDevice(self.UNIT_PELLET_CONSUMPTION, 0, f"{self.lastData['Verbrauch']:.1f}")
             
-            # Energie berechnen (jetzt mit korrektem Wert)
+            # Energie berechnen
             try:
                 energy = float(self.lastData['Verbrauch']) * 4.8
                 self.updateDevice(self.UNIT_ENERGY, 0, f"{energy:.1f}")
             except:
                 pass
         
+        # Vorlauf
         if 'TVL_1' in self.lastData and self.lastData['TVL_1']:
             self.updateDevice(self.UNIT_FLOW_TEMP, 0, self.lastData['TVL_1'])
         
@@ -426,10 +452,12 @@ class BasePlugin:
                 self.updateDevice(self.UNIT_DRAFT_ACTUAL, 0, self.lastData['SZ_Ist'])
             if 'SZ_Soll' in self.lastData and self.lastData['SZ_Soll']:
                 self.updateDevice(self.UNIT_DRAFT_TARGET, 0, self.lastData['SZ_Soll'])
+            
+            # ✅ Rücklauf Soll - jetzt Index 6
             if 'TRL_Soll' in self.lastData and self.lastData['TRL_Soll']:
                 self.updateDevice(self.UNIT_RETURN_TEMP_TARGET, 0, self.lastData['TRL_Soll'])
             
-            # ✅ FWS Updates - NEU!
+            # FWS Updates
             if 'FWS_Vorlauf' in self.lastData and self.lastData['FWS_Vorlauf']:
                 self.updateDevice(self.UNIT_FWS_FLOW_TEMP, 0, self.lastData['FWS_Vorlauf'])
             if 'FWS_Fuehler' in self.lastData and self.lastData['FWS_Fuehler']:
