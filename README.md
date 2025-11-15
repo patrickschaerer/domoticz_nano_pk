@@ -20,7 +20,7 @@ Read on how to try this and let me know if it works!
 
 
 ### Supported parameters ###
-## 📊 Vollständige Zuordnungstabelle - FINAL v1.4.0
+## 📊 Vollständige Zuordnungstabelle - v1.4.0
 
 ### ✅ Verifizierte und korrekte Zuordnungen:
 
@@ -31,25 +31,25 @@ Read on how to try this and let me know if it works!
 | **O2 Soll** | 7.5% | **Index 2** | 7.9 | `O2_Soll` | Unit 19 | ✅ |
 | **Kessel Temp Ist** | 67.9°C | **Index 3** | 67.6 | `TK` | Unit 2 | ✅ |
 | **Kessel Temp Soll** | 70°C | **Index 4** | 70 | `TK_Soll` | Unit 17 | ✅ |
-| **Rücklauf Temp Ist** | 62.3°C | **Index 5** | 64.9 | `TRL` | Unit 12 | ✅ KORRIGIERT |
-| **Saugzug Ist** | 64 Pa | **Index 6** | 64 | `SZ_Ist` | Unit 20 | ✅ |
-| **Saugzug Soll** | 7 Pa | **Index 7** | 7 | `SZ_Soll` | Unit 21 | ✅ |
-| **Rauchgastemperatur** | 144.9°C | **Index 8** | 136.7 | `TRG` | Unit 6 | ✅ KORRIGIERT |
-| **Puffer Mitte** | 63.6°C | **Index 11** | 63.4 | `TPm` | Unit 9 | ✅ KORRIGIERT |
+| **Rücklauf Temp Ist** | 62.3°C | **Index 5** | 64.9 | `TRL` | Unit 12 | ✅  |
+| **Saugzug Ist** | 64 Pa | **Index 6** | 64 | `SZ_Ist` | Unit 20 |  |
+| **Saugzug Soll** | 7 Pa | **Index 7** | 7 | `SZ_Soll` | Unit 21 |  |
+| **Rauchgastemperatur** | 144.9°C | **Index 8** | 136.7 | `TRG` | Unit 6 | ✅ |
+| **Puffer Mitte** | 63.6°C | **Index 11** | 63.4 | `TPm` | Unit 9 | falsch ist auch Oben |
 | **Puffer Unten** | 60.3°C | **Index 13** | 59.6 | `TPu` | Unit 10 | ✅ FEST |
-| **Puffer Füllgrad** | 94% | **Index 14** | 93 | `Puff_Fuellgrad` | Unit 11 | ✅ NEU! |
+| **Puffer Füllgrad** | 94% | **Index 14** | 93 | `Puff_Fuellgrad` | Unit 11 | ✅ |
 | **Puffer Oben** | 63.7°C | **Index 19** | 63 | `TPo` | Unit 8 | ✅ FEST |
-| **Leistung** | 69% | **Index 24** | 70.4 | `Leistung` | Unit 5 | ✅ KORRIGIERT |
-| **Pellet Lagerstand** | 11.2 kg | **Index 46** | 11.2 | `Lagerstand` | Unit 13 | ✅ |
-| **Pellet Verbrauch** | 2418.5 kg | **Index 47** | 24185/10 | `Verbrauch` | Unit 14 | ✅ /10 |
+| **Leistung** | 69% | **Index 24** | 70.4 | `Leistung` | Unit 5 | ✅ FEST |
+| **Pellet Lagerstand** | 11.2 kg | **Index 46** | 11.2 | `Lagerstand` | Unit 13 | wahrscheinlich falsch |
+| **Pellet Verbrauch** | 2418.5 kg | **Index 47** | 24185/10 | `Verbrauch` | Unit 14 | wahrscheinlich falsch|
 | **Störungsnummer** | - | **Index 49** | - | `Stoerung_Nr` | - | ✅ |
 | **Außentemperatur** | 10.1°C | **Index 54** | 10.1 | `Taus` | Unit 7 | ✅ FEST |
 | **Vorlauf HK1** | 35°C | **Index 64** | 34.8 | `TVL_1` | Unit 15 | ✅ |
 | **FWS Vorlauf** | 63.7°C | **Index 110** | 63.6 | `FWS_Vorlauf` | Unit 24 | ✅ |
 | **FWS Fühler** | 63.5°C | **Index 111** | 63.6 | `FWS_Fuehler` | Unit 25 | ✅ |
 | **FWS Soll** | 50°C | **Index 112** | 50 | `FWS_Soll` | Unit 26 | ✅ |
-| **FWS Gesamtverbrauch** | 16300 l | **Index 117** | 16300 | `FWS_Gesamtverbrauch` | Unit 27 | ✅ |
-| **Störung (Digital)** | False | **Index 126 Bit 13** | 0 | `Stoerung` | Unit 4 | ✅ |
+| **FWS Gesamtverbrauch** | 16300 l | **Index 117** | 16300 | `FWS_Gesamtverbrauch` | Unit 27 |  |
+| **Störung (Digital)** | False | **Index 126 Bit 13** | 0 | `Stoerung` | Unit 4 |  |
 
 ---
 
@@ -70,7 +70,7 @@ Read on how to try this and let me know if it works!
 
 | Parameter | Screenshot-Wert | Problem | Bemerkung |
 |-----------|----------------|---------|-----------|
-| **Raumtemp (HK1)** | 20°C | Index 50 = 33 | 33 ≠ 20 - falscher Sensor? |
+| **Raumtemp (HK1)** | 20°C | Index 50 = 33 | 33 ≠ 20 - kein Sensor montiert darum unklar |
 | **Rücklauf Soll** | 35°C | Index 6 = 64 | 64 ≠ 35 - eventuell anderer Index? |
 | **Lagerstand Kombi** | null | - | Nicht vorhanden (separate Anlage?) |
 
@@ -79,21 +79,21 @@ Read on how to try this and let me know if it works!
 ## 📋 Index-Mapping Übersicht (0-126):
 
 ```
-Index 0:   ZK (Kesselzustand)              ✅
+Index 0:   ZK (Kesselzustand)              ✅ FEST
 Index 1:   O2 Ist                           ✅
 Index 2:   O2 Soll                          ✅
 Index 3:   TK (Kessel Temp)                 ✅
 Index 4:   TK Soll                          ✅
-Index 5:   TRL (Rücklauf Ist)              ✅ NEU
+Index 5:   TRL (Rücklauf Ist)              ✅ 
 Index 6:   SZ Ist / Rücklauf Soll?         ✅
 Index 7:   SZ Soll                          ✅
-Index 8:   TRG (Rauchgas)                   ✅ NEU
+Index 8:   TRG (Rauchgas)                   ✅ FEST
 Index 9:   ?
 Index 10:  ?
-Index 11:  TPm (Puffer Mitte)              ✅ NEU
+Index 11:  TPm (Puffer Mitte)              noch falsch
 Index 12:  ?
 Index 13:  TPu (Puffer Unten)              ✅ FEST
-Index 14:  Puffer Füllgrad                 ✅ NEU
+Index 14:  Puffer Füllgrad                 ✅ FEST
 Index 15:  ?
 Index 16:  ?
 Index 17:  ?
@@ -103,10 +103,10 @@ Index 20:  ?
 Index 21:  ?
 Index 22:  ? (war Puffer Mitte - FALSCH)
 Index 23:  ?
-Index 24:  Leistung                         ✅ NEU
+Index 24:  Leistung                         ✅ 
 ...
-Index 46:  Lagerstand                       ✅
-Index 47:  Verbrauch (/10)                  ✅
+Index 46:  Lagerstand                       
+Index 47:  Verbrauch (/10)                  
 Index 48:  ?
 Index 49:  Störungs Nr                      ✅
 Index 50:  ? (Raumtemp?)
@@ -126,6 +126,4 @@ Index 126: Digital Bits (Störung etc.)      ✅
 
 ---
 
-## ✅ Zusammenfassung:
 
-**20 von 23 Parametern korrekt zugeordnet** (87% Erfolgsrate)
